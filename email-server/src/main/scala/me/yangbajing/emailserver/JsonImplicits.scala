@@ -2,9 +2,8 @@ package me.yangbajing.emailserver
 
 import java.time.LocalDateTime
 
-import me.yangbajing.emailserver.common.settings.{SettingServer, Setting}
-import me.yangbajing.emailserver.domain.{RemoveEmailSender, SendEmail, AddEmailSender}
-import me.yangbajing.emailserver.model.EmailSender
+import me.yangbajing.emailserver.common.settings.{Setting, SettingServer}
+import me.yangbajing.emailserver.domain.{EmailSender, SendEmail}
 import me.yangbajing.emailserver.util.Utils
 import play.api.libs.json._
 
@@ -20,8 +19,6 @@ trait JsonImplicits {
       JsSuccess(LocalDateTime.parse(json.as[String], Utils.formatterDateTime))
   }
   implicit val __sendEmailFormats = Json.format[SendEmail]
-  implicit val __addEmailSenderFormats = Json.format[AddEmailSender]
-  implicit val __removeEmailSenderFormats = Json.format[RemoveEmailSender]
   implicit val __emailSenderFormats = Json.format[EmailSender]
   implicit val __settingServerFormats = Json.format[SettingServer]
   implicit val __settingFormats = Json.format[Setting]

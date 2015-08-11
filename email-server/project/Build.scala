@@ -11,7 +11,7 @@ object Build extends Build {
   lazy val root = Project("email-server", file("."))
     .settings(
       description := "Email Server",
-      version := "1.0",
+      version := "0.0.1",
       homepage := Some(new URL("http://github.com/yangbajing/scala-applications")),
       organization := "me.yangbajing",
       organizationHomepage := Some(new URL("https://github.com/yangbajing/scala-applications")),
@@ -39,7 +39,7 @@ object Build extends Build {
         "Typesafe Snapshots" at "http://repo.typesafe.com/typesafe/snapshots/",
         "Sonatype snapshots" at "http://oss.sonatype.org/content/repositories/snapshots"),
       AssemblyKeys.assemblyJarName in AssemblyKeys.assembly := "email-server.jar",
-      mainClass in AssemblyKeys.assembly := Some("me.yangbajing.emailserver.app.Main"),
+      mainClass in AssemblyKeys.assembly := Some("me.yangbajing.emailserver.Main"),
       libraryDependencies ++= Seq(
         _commonsEmail,
         _akkaHttp,

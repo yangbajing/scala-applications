@@ -8,6 +8,4 @@ case class SendEmail(subject: String, to: Seq[String], content: String, userName
 
 case object GetEmailSenders
 
-case class AddEmailSender(userName: String, password: String, smtp: String, smtpPort: Int, ssl: Boolean)
-
-case class RemoveEmailSender(userName: String)
+case class EmailSender(userName: String, password: String, smtp: String, smtpPort: Int, ssl: Boolean, default: Boolean)

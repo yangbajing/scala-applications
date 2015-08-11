@@ -1,8 +1,9 @@
-package me.yangbajing.emailserver.app
+package me.yangbajing.emailserver
 
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
+import me.yangbajing.emailserver.common.settings.Settings
 import me.yangbajing.emailserver.route.Routes
 
 /**
@@ -15,6 +16,6 @@ object Main {
 
   def main(args: Array[String]): Unit = {
     val routes = new Routes()
-    Http().bindAndHandle(routes.routes, "localhost", 9999)
+    Http().bindAndHandle(routes.routes, Settings.config.server.interface, Settings.config.server.port)
   }
 }

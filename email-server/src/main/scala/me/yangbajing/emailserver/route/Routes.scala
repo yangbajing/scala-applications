@@ -6,9 +6,10 @@ import akka.http.scaladsl.server.Directives._
 import akka.stream.ActorMaterializer
 import akka.util.Timeout
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
+import me.yangbajing.emailserver.ActorService
 import me.yangbajing.emailserver.JsonImplicits._
 import me.yangbajing.emailserver.common.settings.Settings
-import me.yangbajing.emailserver.domain.{AddEmailSender, RemoveEmailSender, SendEmail}
+import me.yangbajing.emailserver.domain.SendEmail
 import me.yangbajing.emailserver.service.EmailService
 import play.api.libs.json.{JsValue, Json}
 
@@ -19,10 +20,10 @@ import scala.util.{Failure, Success}
  * 路由
  * Created by Yang Jing (yangbajing@gmail.com) on 2015-08-10.
  */
-class Routes()(implicit system: ActorSystem, materializer: ActorMaterializer) {
+class Routes()(implicit val system: ActorSystem, val materializer: ActorMaterializer) extends ActorService {
   implicit val timeout = Timeout(60.seconds)
 
-  val emailService = new EmailService(Settings.config.defaultEmail, Settings.config.emails)
+  val emailService = new EmailService(Settings.config.emails)
 
   val routes =
     pathPrefix("email") {
@@ -36,26 +37,6 @@ class Routes()(implicit system: ActorSystem, materializer: ActorMaterializer) {
           }
         }
       } ~
-        path("add") {
-          post {
-            entity(as[JsValue].map(_.as[AddEmailSender])) { addEmailSender =>
-              complete {
-                emailService.addEmailSender(addEmailSender)
-                StatusCodes.OK
-              }
-            }
-          }
-        } ~
-        path("remove") {
-          post {
-            entity(as[JsValue].map(_.as[RemoveEmailSender])) { removeEmailSender =>
-              complete {
-                emailService.remoeEmailSender(removeEmailSender)
-                StatusCodes.custom(200, "", "Remove Email Sender: " + removeEmailSender)
-              }
-            }
-          }
-        } ~
         path("users") {
           get {
             onComplete(emailService.getEmailSenders) {
