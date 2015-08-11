@@ -27,17 +27,23 @@ object Settings {
       .map(_.getKey.replace(".userName", ""))
       .map(key => _emailSender(emailConf.getConfig(key)))
       .toVector
-    new Setting(_server(c.getConfig("server")), emails)
+    Setting(_server(c.getConfig("server")), emails, _activemq(c.getConfig("activemq")))
   }
 
   private def _emailSender(c: Config): EmailSender = {
-    new EmailSender(c.getString("userName"), c.getString("password"), c.getString("smtp"), c.getInt("smtpPort"),
-      c.getBoolean("ssl"), Try(c.getBoolean("default")).getOrElse(false))
+    EmailSender(c.getString("userName"), c.getString("password"), c.getString("smtp"), c.getInt("smtpPort"),
+      c.getBoolean("ssl"), Try(c.getBoolean("default")).getOrElse(false), Try(c.getString("group")).getOrElse(""))
   }
 
-  private def _server(c: Config) = new SettingServer(c.getString("interface"), c.getInt("port"))
+  private def _server(c: Config) = SettingServer(c.getString("interface"), c.getInt("port"))
+
+  private def _activemq(c: Config) = SettingActivemq(c.getString("url"),
+    Try(c.getString("userName")).toOption, Try(c.getString("password")).toOption,
+    c.getString("emailQueueName"))
 }
 
-case class Setting(server: SettingServer, emails: Seq[EmailSender])
+case class SettingActivemq(url: String, userName: Option[String], password: Option[String], emailQueueName: String)
 
 case class SettingServer(interface: String, port: Int)
+
+case class Setting(server: SettingServer, emails: Seq[EmailSender], activemq: SettingActivemq)

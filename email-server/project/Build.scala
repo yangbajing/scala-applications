@@ -49,11 +49,13 @@ object Build extends Build {
         _logback,
         _activemqClient,
         _typesafeConfig,
+        _scalaLogging,
         _scalatest))
 
   val _scalaXml = "org.scala-lang.modules" %% "scala-xml" % "1.0.4"
   val _scalatest = "org.scalatest" %% "scalatest" % "2.2.5" % "test"
   val _typesafeConfig = "com.typesafe" % "config" % "1.3.0"
+  val _scalaLogging = ("com.typesafe.scala-logging" %% "scala-logging" % "3.1.0").exclude("org.scala-lang", "scala-library").exclude("org.scala-lang", "scala-reflect")
 
   val verAkkaHttp = "1.0"
   val _akkaStream = "com.typesafe.akka" %% "akka-stream-experimental" % verAkkaHttp

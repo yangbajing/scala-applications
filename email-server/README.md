@@ -2,10 +2,13 @@
 
 Email发送服务器
 
-推荐在启动时使用 `-Dapplication.file=/path/application.conf` 推定配置文件
+推荐在启动时使用 `-Dapplication.file=/usr/app/etc/emailserver/application.conf` 指定配置文件
 
 ```
+# 编译
 ./sbt assembly
+
+# 运行
 java -Dapplication.file=/usr/app/etc/emailserver/application.conf -jar target/scala-2.11/email-server.jar
 ```
 
@@ -17,9 +20,15 @@ curl http://localhost:9999/email/users
 
 # 发送测试邮件
 curl -v -XPOST -H "Content-Type: application/json" \
-  -d '{"subject":"测试邮件","to":["yangbajing@gmail.com", "jing.yang@socialcredits.cn"],"content":"测试邮件内容咯~"}' \
+  -d '{"userName":"Info@socialcredits.cn", "subject":"测试邮件","to":["yangbajing@gmail.com", "jing.yang@socialcredits.cn"],"content":"测试邮件内容咯~"}' \
   http://localhost:9999/email/send
+
 ```
+
+## 使用JSM发送邮件
+
+修改
+
 
 ## changelog
 
