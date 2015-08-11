@@ -11,7 +11,7 @@ object Build extends Build {
   lazy val root = Project("email-server", file("."))
     .settings(
       description := "Email Server",
-      version := "0.0.1",
+      version := "0.0.2",
       homepage := Some(new URL("http://github.com/yangbajing/scala-applications")),
       organization := "me.yangbajing",
       organizationHomepage := Some(new URL("https://github.com/yangbajing/scala-applications")),
