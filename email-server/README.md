@@ -26,9 +26,8 @@ curl http://localhost:9999/email/users
 
 # 发送测试邮件
 curl -v -XPOST -H "Content-Type: application/json" \
-  -d '{"sender":"Info@socialcredits.cn", "subject":"测试邮件","to":["yangbajing@gmail.com", "jing.yang@socialcredits.cn"],"content":"测试邮件内容咯~"}' \
+  -d '{"sender":"Info@email.cn", "subject":"测试邮件","to":["user1@email.cn", "user2@email.cn"],"content":"测试邮件内容咯~"}' \
   http://localhost:9999/email/send
-
 ```
 
 

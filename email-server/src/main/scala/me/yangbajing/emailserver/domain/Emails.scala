@@ -11,5 +11,4 @@ case class SendEmail(sender: String, subject: String, to: Seq[String], content: 
 
 case object GetEmailSenders
 
-case class EmailSender(userName: String, password: String, smtp: String, smtpPort: Int, ssl: Boolean, default: Boolean,
-                       group: String)
+case class EmailSender(userName: String, password: String, smtp: String, smtpPort: Int, ssl: Boolean, group: String)

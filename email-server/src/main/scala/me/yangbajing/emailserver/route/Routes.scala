@@ -8,9 +8,8 @@ import akka.util.Timeout
 import de.heikoseeberger.akkahttpplayjson.PlayJsonSupport._
 import me.yangbajing.emailserver.ActorService
 import me.yangbajing.emailserver.JsonImplicits._
-import me.yangbajing.emailserver.common.settings.Settings
 import me.yangbajing.emailserver.domain.SendEmail
-import me.yangbajing.emailserver.service.{MQConsumerService, EmailService}
+import me.yangbajing.emailserver.service.{EmailService, MQConsumerService}
 import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.duration._
