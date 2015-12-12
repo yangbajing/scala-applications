@@ -1,0 +1,9 @@
+# insert
+curl -XPOST -H 'content-type:application/json;charset=utf8' \
+  -d '{"key":"杭州誉存科技有限公司","tags":["大数据","企业信用"]}' \
+  http://localhost:44444/api/mongo/dbname/collname/_insert
+
+# query
+curl -XPOST -H 'content-type:application/json' \
+  -d '{"filter":{"key":"杭州誉存科技有限公司"}}' \
+  http://localhost:44444/api/mongo/dbname/collname/_query
