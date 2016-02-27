@@ -1,10 +1,11 @@
 package me.yangbajing.akkarestapi.routes
 
 import akka.http.scaladsl.server.Directives._
-import akka.stream.ActorMaterializer
-import me.yangbajing.akkarestapi.service.NewsService
 
-import scala.concurrent.ExecutionContextExecutor
+import akka.stream.Materializer
+import me.yangbajing.akkarestapi.service.ContextProps
+
+import scala.concurrent.ExecutionContext
 
 /**
  * Api Route
@@ -12,11 +13,12 @@ import scala.concurrent.ExecutionContextExecutor
  */
 object ApiRoute {
 
-  def apply(newsService: NewsService)(implicit ec: ExecutionContextExecutor, mat: ActorMaterializer) = {
-    pathPrefix("api") {
-      NewsApiRoute(newsService) ~
-        MongoApiRoute()
+  def apply(props: ContextProps)(implicit ec: ExecutionContext, mat: Materializer) =
+    handleExceptions(props.myExceptionHandler) {
+      pathPrefix("api") {
+        NewsApiRoute(props) ~
+          MongoApiRoute(props)
+      }
     }
-  }
 
 }

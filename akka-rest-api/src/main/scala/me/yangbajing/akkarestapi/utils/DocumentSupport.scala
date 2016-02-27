@@ -20,9 +20,9 @@ trait DocumentSupport {
       }
 
   implicit val documentMarshaller: ToEntityMarshaller[Document] =
-    Marshaller.StringMarshaller.wrap(ContentType(MediaTypes.`application/json`, HttpCharsets.`UTF-8`))(v => v.toJson())
+    Marshaller.StringMarshaller.wrap(MediaTypes.`application/json`)(v => v.toJson())
   implicit val seqDocumentMarshaller: ToEntityMarshaller[Seq[Document]] =
-    Marshaller.StringMarshaller.wrap(ContentType(MediaTypes.`application/json`, HttpCharsets.`UTF-8`))(vs => vs.map(_.toJson()).mkString("[", ",", "]"))
+    Marshaller.StringMarshaller.wrap(MediaTypes.`application/json`)(vs => vs.map(_.toJson()).mkString("[", ",", "]"))
 
 }
 

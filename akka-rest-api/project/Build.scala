@@ -12,7 +12,7 @@ object Build extends Build {
     .settings(
       description := "Akka REST API",
       version := "0.0.2",
-      homepage := Some(new URL("http://github.com/yangbajing/scala-applications")),
+     homepage := Some(new URL("https://github.com/yangbajing/scala-applications/tree/master/akka-rest-api")),
       organization := "me.yangbajing",
       organizationHomepage := Some(new URL("https://github.com/yangbajing/scala-applications")),
       startYear := Some(2015),
@@ -43,7 +43,8 @@ object Build extends Build {
       libraryDependencies ++= Seq(
         _mongoScala,
         _json4sJackson,
-        _akkaHttp,
+        _redisclient,
+        _akkaHttpCore,
         _akkaActor,
         _akkaSlf4j,
         _logback,
@@ -56,14 +57,14 @@ object Build extends Build {
   val _typesafeConfig = "com.typesafe" % "config" % "1.3.0"
   val _scalaLogging = ("com.typesafe.scala-logging" %% "scala-logging" % "3.1.0").exclude("org.scala-lang", "scala-library").exclude("org.scala-lang", "scala-reflect")
 
-  val verAkkaHttp = "1.0"
-  val _akkaStream = "com.typesafe.akka" %% "akka-stream-experimental" % verAkkaHttp
-  val _akkaHttpCore = "com.typesafe.akka" %% "akka-http-core-experimental" % verAkkaHttp
-  val _akkaHttp = "com.typesafe.akka" %% "akka-http-experimental" % verAkkaHttp
+  val verAkka = "2.4.2"
 
-  val verAkka = "2.3.14"
+  val _akkaHttpCore = "com.typesafe.akka" %% "akka-http-experimental" % verAkka
+
   val _akkaActor = "com.typesafe.akka" %% "akka-actor" % verAkka
   val _akkaSlf4j = "com.typesafe.akka" %% "akka-slf4j" % verAkka
+
+  val _redisclient = "net.debasishg" %% "redisclient" % "3.0"
 
   val _json4sJackson = "org.json4s" %% "json4s-jackson" % "3.3.0"
 

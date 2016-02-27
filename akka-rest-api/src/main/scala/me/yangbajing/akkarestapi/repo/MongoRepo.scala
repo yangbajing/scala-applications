@@ -1,18 +1,16 @@
 package me.yangbajing.akkarestapi.repo
 
 import me.yangbajing.akkarestapi.model.ResponseMessage
-import org.bson.BsonInt32
-import org.mongodb.scala.bson.{BsonValue, BsonObjectId, BsonDocument}
-import org.mongodb.scala.bson.collection.immutable.Document
-import org.mongodb.scala.result.{DeleteResult, UpdateResult}
-import org.mongodb.scala.{Completed, MongoClient}
+import org.mongodb.scala.bson.{BsonDocument, BsonInt32, BsonObjectId}
+import org.mongodb.scala.{Document, MongoClient}
 
 import scala.concurrent.{ExecutionContext, Future}
 
+
 /**
- * Mongo Repo
- * Created by Yang Jing (yangbajing@gmail.com) on 2015-11-16.
- */
+  * Mongo Repo
+  * Created by Yang Jing (yangbajing@gmail.com) on 2015-11-16.
+  */
 class MongoRepo private(mongoClient: MongoClient, dbName: String, collName: String)(implicit ec: ExecutionContext) {
   def update(doc: Document): Future[Document] = {
     val result =

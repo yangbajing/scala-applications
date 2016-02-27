@@ -30,7 +30,7 @@ trait JsonSupport {
     json4sMarshaller(serialization, formats)
 
   implicit def json4sMarshaller[A <: AnyRef](implicit serialization: Serialization, formats: Formats): ToEntityMarshaller[A] =
-    Marshaller.StringMarshaller.wrap(ContentTypes.`application/json`)(serialization.write[A])
+    Marshaller.StringMarshaller.wrap(MediaTypes.`application/json`)(serialization.write[A])
 
 }
 
