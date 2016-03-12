@@ -1,18 +1,18 @@
 package me.yangbajing.akkarestapi.routes
 
 import akka.http.scaladsl.model.StatusCodes
-import akka.stream.{Materializer, ActorMaterializer}
+import akka.stream.Materializer
 import me.yangbajing.akkarestapi.repo.MongoRepo
 import me.yangbajing.akkarestapi.service.ContextProps
 import org.mongodb.scala.bson.collection.immutable.Document
 
-import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
+import scala.concurrent.ExecutionContext
 import scala.util.{Failure, Success}
 
 /**
- * Mongo Api
- * Created by Yang Jing (yangbajing@gmail.com) on 2015-11-16.
- */
+  * Mongo Api
+  * Created by Yang Jing (yangbajing@gmail.com) on 2015-11-16.
+  */
 object MongoApiRoute {
 
   import akka.http.scaladsl.server.Directives._

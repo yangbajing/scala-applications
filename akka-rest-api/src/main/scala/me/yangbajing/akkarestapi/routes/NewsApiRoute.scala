@@ -8,9 +8,9 @@ import me.yangbajing.akkarestapi.service.ContextProps
 import scala.concurrent.ExecutionContext
 
 /**
- * 新闻 API
- * Created by Yang Jing (yangbajing@gmail.com) on 2015-11-16.
- */
+  * 新闻 API
+  * Created by Yang Jing (yangbajing@gmail.com) on 2015-11-16.
+  */
 object NewsApiRoute {
 
   import akka.http.scaladsl.server.Directives._
@@ -46,5 +46,4 @@ object NewsApiRoute {
     }
 
   }
-
 }

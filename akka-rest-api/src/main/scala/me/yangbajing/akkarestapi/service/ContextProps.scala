@@ -2,6 +2,7 @@ package me.yangbajing.akkarestapi.service
 
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.{Directives, ExceptionHandler}
+
 import com.typesafe.scalalogging.StrictLogging
 import me.yangbajing.akkarestapi.model.ResponseMessage
 import me.yangbajing.akkarestapi.utils.JsonSupport
@@ -11,8 +12,6 @@ import me.yangbajing.akkarestapi.utils.JsonSupport
  * Created by Yang Jing (yangbajing@gmail.com) on 2015-11-17.
  */
 class ContextProps extends StrictLogging {
-
-  val newsService = NewsService()
 
   import Directives._
   import me.yangbajing.akkarestapi.utils.JsonSupport._
@@ -30,4 +29,5 @@ class ContextProps extends StrictLogging {
 //      }
   }
 
+  val newsService = NewsService()
 }
