@@ -20,6 +20,6 @@ val verHadoop = "2.6.2"
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "1.5.2" % "provided,test",
   "org.apache.spark" %% "spark-sql" % "1.5.2" % "provided,test",
-  "org.scalatest" %% "scalatest" % "2.2.6"
+  "org.scalatest" %% "scalatest" % "2.2.6" % "test"
 )
 
