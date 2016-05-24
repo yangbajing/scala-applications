@@ -1,12 +1,16 @@
 import java.nio.file._
 
-import play.api.libs.ws.ning.NingWSClient
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import play.api.libs.ws.ahc.AhcWSClient
 
 import scala.concurrent.Await
 import scala.concurrent.duration._
 
 object Demo extends App {
-  val client = NingWSClient()
+  implicit val system = ActorSystem()
+  implicit val mat = ActorMaterializer()
+  val client = AhcWSClient()
 
   val paramsList =
     """曹某某 4310231982xxxxxx38 158xxxx7233 6217xxxxxxxxxx95922
@@ -20,7 +24,7 @@ object Demo extends App {
       |罗某 4409811991xxxxxx11 135xxxx3967 6212xxxxxxxxxx62918   
       |许某 3607351997xxxxxx37 181xxxx7357 6228xxxxxxxxxx41278""".stripMargin
       .split("\n")
-      .map{ line => 
+      .map { line =>
         //("external", "true") :: (List("personName", "idCard", "tel", "bankCard") zip line.trim.split("""[ ]+"""))
         Seq("personName", "idCard", "tel", "bankCard") zip line.trim.split("""[ ]+""")
       }
@@ -39,5 +43,6 @@ object Demo extends App {
   Files.write(Paths.get("demo.txt"), results.mkString("\n").getBytes("UTF-8"))
 
   client.close()
+  Await.result(system.terminate(), 10.seconds)
 }
 

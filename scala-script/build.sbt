@@ -1,4 +1,4 @@
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.8"
 
 scalacOptions ++= Seq(
   "-encoding", "utf8",
@@ -7,5 +7,5 @@ scalacOptions ++= Seq(
   "-deprecation"
 )
       
-libraryDependencies += "com.typesafe.play" %% "play-ws" % "2.4.6"
+libraryDependencies += "com.typesafe.play" %% "play-ws" % "2.5.3"
 
