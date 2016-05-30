@@ -8,4 +8,3 @@ scalacOptions ++= Seq(
 )
       
 libraryDependencies += "com.typesafe.play" %% "play-ws" % "2.5.3"
-
