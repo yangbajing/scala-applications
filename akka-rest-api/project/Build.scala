@@ -16,7 +16,7 @@ object Build extends Build {
       organization := "me.yangbajing",
       organizationHomepage := Some(new URL("https://github.com/yangbajing/scala-applications")),
       startYear := Some(2015),
-      scalaVersion := "2.11.7",
+      scalaVersion := "2.11.8",
       scalacOptions ++= Seq(
         "-encoding", "utf8",
         "-unchecked",

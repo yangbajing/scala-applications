@@ -7,4 +7,4 @@ scalacOptions ++= Seq(
   "-deprecation"
 )
       
-libraryDependencies += "com.typesafe.play" %% "play-ws" % "2.5.3"
+libraryDependencies += "com.typesafe.play" %% "play-ws" % "2.5.4"
