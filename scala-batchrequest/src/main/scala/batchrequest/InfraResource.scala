@@ -1,8 +1,7 @@
 package batchrequest
 
+import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
-
-import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -11,9 +10,10 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class InfraResource {
 
-  def corpDetail(companyName: String)(implicit ec: ExecutionContext): Future[Option[JsValue]] = Future {
+  def corpDetail(companyName: String)(implicit ec: ExecutionContext): Future[Option[Company]] = Future {
     TimeUnit.SECONDS.sleep(1)
-    Some(Json.obj("companyName" -> companyName))
+    println(s"[${LocalDateTime.now()}] 收到查询：$companyName 工商信息付费请求")
+    Some(Company(companyName))
   }
 
 }

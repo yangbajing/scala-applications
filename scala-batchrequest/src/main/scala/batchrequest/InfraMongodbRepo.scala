@@ -1,8 +1,7 @@
 package batchrequest
 
-import java.util.concurrent.TimeUnit
-
-import play.api.libs.json.{JsObject, JsValue, Json}
+import java.time.LocalDateTime
+import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -11,14 +10,31 @@ import scala.concurrent.{ExecutionContext, Future}
   */
 class InfraMongodbRepo {
 
-  def saveCorpDetail(companyName: String, jsObject: JsObject)(implicit ec: ExecutionContext): Future[Int] = Future {
-    TimeUnit.MICROSECONDS.sleep(200)
-    1
-  }
+  def saveCorpDetail(companyName: String, company: Company)(implicit ec: ExecutionContext): Future[Option[Company]] =
+    Future {
+      TimeUnit.MICROSECONDS.sleep(200)
+      println(s"[${LocalDateTime.now()}] 保存公司: $company 成功")
+      InfraCompanyDBMock.saveCompany(companyName, company)
+    }
 
-  def findCorpDetail(companyName: String)(implicit ec: ExecutionContext): Future[Option[JsValue]] = Future {
+  def findCorpDetail(companyName: String)(implicit ec: ExecutionContext): Future[Option[Company]] = Future {
     TimeUnit.MILLISECONDS.sleep(100)
-    Some(Json.obj("companyName" -> companyName))
+    InfraCompanyDBMock.getCompany(companyName) match {
+      case some@Some(_) =>
+        println(s"[${LocalDateTime.now()}] 从本地数据库找到公司：$companyName")
+        some
+      case None =>
+        println(s"[${LocalDateTime.now()}] 本地数据库未找到公司：$companyName")
+        None
+    }
   }
 
+}
+
+object InfraCompanyDBMock {
+  private val companies = new ConcurrentHashMap[String, Company]()
+
+  def getCompany(companyName: String) = Option(companies.get(companyName))
+
+  def saveCompany(companyName: String, company: Company) = Option(companies.put(companyName, company))
 }

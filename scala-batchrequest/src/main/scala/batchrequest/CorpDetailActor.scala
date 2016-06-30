@@ -2,7 +2,6 @@ package batchrequest
 
 import akka.actor.Props
 import batchrequest.ForwardCompanyActor.{ReadFromDB, ReadFromInfra}
-import play.api.libs.json.JsObject
 
 import scala.concurrent.Future
 
@@ -21,10 +20,10 @@ class CorpDetailActor(infraResource: InfraResource,
   override val readFromInfra: ReadFromInfra = (companyName) => {
     infraResource.corpDetail(companyName)
       .flatMap {
-        case Some(json) =>
+        case Some(company) =>
           infraMongodbRepo
-            .saveCorpDetail(companyName, json.asInstanceOf[JsObject])
-            .map(_ => Some(json))
+            .saveCorpDetail(companyName, company)
+            .map(_ => Some(company))
 
         case None =>
           Future.successful(None)
