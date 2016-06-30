@@ -8,7 +8,6 @@ scalacOptions ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe.play" %% "play-json" % "2.5.4",
   "com.typesafe.akka" %% "akka-actor" % "2.4.7"
 )
 

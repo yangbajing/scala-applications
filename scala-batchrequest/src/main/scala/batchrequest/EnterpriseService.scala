@@ -1,7 +1,10 @@
 package batchrequest
 
 import akka.actor.ActorSystem
+import akka.pattern.ask
 import akka.util.Timeout
+import batchrequest.message.{GetCompanyMessage, GetCorpDetail}
+
 import scala.concurrent.duration._
 
 /**
@@ -13,5 +16,10 @@ class EnterpriseService(actorSystem: ActorSystem,
 
   private val master = actorSystem.actorOf(CompanyMaster.props(infraResource, infraMongodbRepo), "infra-company")
   private implicit val timeout = Timeout(60.seconds)
+
+  @inline
+  private def getResult(message: GetCompanyMessage) = master.ask(message).mapTo[Option[Company]]
+
+  def getCorpDetail(companyName: String) = getResult(GetCorpDetail(companyName))
 
 }

@@ -2,10 +2,9 @@ package batchrequest
 
 import akka.actor.{Actor, ActorRef}
 import batchrequest.message.{QueryCompany, ReceiveQueryCompanyResult}
-import play.api.libs.json.JsValue
 
-import scala.concurrent.Future
 import scala.collection.mutable
+import scala.concurrent.Future
 
 /**
   * Created by Yang Jing (yangbajing@gmail.com) on 2016-06-29.
@@ -41,7 +40,7 @@ trait ForwardCompanyActor extends Actor {
         performReadTask(companyName)
     }
 
-  def dispatchListeners(companyName: String, maybeJsValue: Option[JsValue]): Unit = {
+  def dispatchListeners(companyName: String, maybeJsValue: Option[Company]): Unit = {
     val maybeListener = companyListeners.get(companyName)
     maybeListener.foreach { listeners =>
       for (listener <- listeners) {
@@ -58,8 +57,8 @@ trait ForwardCompanyActor extends Actor {
 
 object ForwardCompanyActor {
 
-  type ReadFromDB = (String) => Future[Option[JsValue]]
+  type ReadFromDB = (String) => Future[Option[Company]]
 
-  type ReadFromInfra = (String) => Future[Option[JsValue]]
+  type ReadFromInfra = (String) => Future[Option[Company]]
 
 }

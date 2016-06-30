@@ -7,7 +7,7 @@ import batchrequest.message.{GetCorpDetail, QueryCompany}
   * Created by Yang Jing (yangbajing@gmail.com) on 2016-06-29.
   */
 class CompanyMaster(infraResource: InfraResource,
-                     infraMongodbRepo: InfraMongodbRepo) extends Actor {
+                    infraMongodbRepo: InfraMongodbRepo) extends Actor {
 
   val actorCorpDetail = context.actorOf(CorpDetailActor.props(infraResource, infraMongodbRepo), "corpDetail")
 
