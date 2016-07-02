@@ -1,7 +1,8 @@
-package batchrequest
+package combinerequest.service
 
 import akka.actor.{Actor, ActorRef}
-import batchrequest.message.{QueryCompany, ReceiveQueryCompanyResult}
+import combinerequest.domain.Company
+import combinerequest.message.{QueryCompany, ReceiveQueryCompanyResult}
 
 import scala.collection.mutable
 import scala.concurrent.Future

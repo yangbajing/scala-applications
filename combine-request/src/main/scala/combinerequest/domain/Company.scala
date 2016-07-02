@@ -1,4 +1,4 @@
-package batchrequest
+package combinerequest.domain
 
 /**
   * Created by Yang Jing (yangbajing@gmail.com) on 2016-06-30.

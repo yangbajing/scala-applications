@@ -1,7 +1,9 @@
-package batchrequest
+package combinerequest.service
 
 import java.time.LocalDateTime
 import java.util.concurrent.{ConcurrentHashMap, TimeUnit}
+
+import combinerequest.domain.Company
 
 import scala.concurrent.{ExecutionContext, Future}
 

@@ -1,16 +1,17 @@
-package batchrequest
+package combinerequest
 
 import akka.actor.ActorSystem
+import combinerequest.service.{EnterpriseService, InfraMongodbRepo, InfraResource}
 
 import scala.concurrent.Await
-import scala.util.{Failure, Success}
 import scala.concurrent.duration._
+import scala.util.{Failure, Success}
 
 /**
   * 合并同一时间的3个请求
   * Created by Yang Jing (yangbajing@gmail.com) on 2016-06-29.
   */
-object BatchExample {
+object CombineExample {
   val system = ActorSystem()
 
   import system.dispatcher
@@ -32,18 +33,18 @@ object BatchExample {
       List(company1, company2, company3)
     }
 
-    val future = Await.ready(companiesFuture, 60.seconds)
-    future.onComplete {
-      case Success(c1 :: c2 :: c3 :: Nil) =>
-        println(c1 eq c2)
-        println(c2 eq c3)
-        println(s"$c1, $c2, $c3")
-      case Success(unknown) =>
-        System.err.println(s"收到未期待的结果：$unknown")
+    Await.ready(companiesFuture, 60.seconds)
+      .onComplete {
+        case Success(c1 :: c2 :: c3 :: Nil) =>
+//          println(c1 eq c2)
+//          println(c2 eq c3)
+          println(s"$c1, $c2, $c3")
+        case Success(unknown) =>
+          System.err.println(s"收到未期待的结果：$unknown")
 
-      case Failure(e) =>
-        e.printStackTrace()
-    }
+        case Failure(e) =>
+          e.printStackTrace()
+      }
 
     try {
       Await.result(system.terminate(), 60.seconds)

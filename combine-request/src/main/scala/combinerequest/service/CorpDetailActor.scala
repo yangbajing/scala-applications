@@ -1,7 +1,7 @@
-package batchrequest
+package combinerequest.service
 
 import akka.actor.Props
-import batchrequest.ForwardCompanyActor.{ReadFromDB, ReadFromInfra}
+import combinerequest.service.ForwardCompanyActor.{ReadFromDB, ReadFromInfra}
 
 import scala.concurrent.Future
 

@@ -1,7 +1,7 @@
-package batchrequest
+package combinerequest.service
 
 import akka.actor.{Actor, Props}
-import batchrequest.message.{GetCorpDetail, QueryCompany}
+import combinerequest.message.{GetCorpDetail, QueryCompany}
 
 /**
   * Created by Yang Jing (yangbajing@gmail.com) on 2016-06-29.

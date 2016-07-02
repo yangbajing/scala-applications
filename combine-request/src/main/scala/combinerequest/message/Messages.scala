@@ -1,7 +1,7 @@
-package batchrequest.message
+package combinerequest.message
 
 import akka.actor.{Actor, ActorRef}
-import batchrequest.Company
+import combinerequest.domain.Company
 
 /**
   * Created by Yang Jing (yangbajing@gmail.com) on 2016-06-29.
