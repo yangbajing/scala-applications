@@ -41,9 +41,12 @@ object Build extends Build {
       AssemblyKeys.assemblyJarName in AssemblyKeys.assembly := "email-server.jar",
       mainClass in AssemblyKeys.assembly := Some("me.yangbajing.emailserver.Main"),
       libraryDependencies ++= Seq(
+        _scalaReflect,
+        _guice,
+        _redisclient,
+        _ssc,
         _commonsEmail,
         _akkaHttp,
-        _akkaHttpPlayJson,
         _akkaActor,
         _akkaSlf4j,
         _logback,
@@ -52,26 +55,31 @@ object Build extends Build {
         _scalaLogging,
         _scalatest))
 
-  val _scalaXml = "org.scala-lang.modules" %% "scala-xml" % "1.0.4"
-  val _scalatest = "org.scalatest" %% "scalatest" % "2.2.5" % "test"
-  val _typesafeConfig = "com.typesafe" % "config" % "1.3.0"
-  val _scalaLogging = ("com.typesafe.scala-logging" %% "scala-logging" % "3.1.0").exclude("org.scala-lang", "scala-library").exclude("org.scala-lang", "scala-reflect")
+  val _scalaReflect = "org.scala-lang" %  "scala-reflect"  % "2.11.8"
+  val _scalaXml = "org.scala-lang.modules" %% "scala-xml" % "1.0.+"
+  val _scalatest = "org.scalatest" %% "scalatest" % "2.2.+" % "test"
+  val _typesafeConfig = "com.typesafe" % "config" % "1.3.+"
+  val _scalaLogging = ("com.typesafe.scala-logging" %% "scala-logging" % "3.4.0").exclude("org.scala-lang", "scala-library").exclude("org.scala-lang", "scala-reflect")
 
-  val verAkkaHttp = "1.0"
-  val _akkaStream = "com.typesafe.akka" %% "akka-stream-experimental" % verAkkaHttp
-  val _akkaHttpCore = "com.typesafe.akka" %% "akka-http-core-experimental" % verAkkaHttp
-  val _akkaHttp = "com.typesafe.akka" %% "akka-http-experimental" % verAkkaHttp
-  val _akkaHttpPlayJson = "de.heikoseeberger" %% "akka-http-play-json" % "1.0.0"
+//  val _akkaHttpPlayJson = "de.heikoseeberger" %% "akka-http-play-json" % "1.0.0"
+  val verAkka = "2.4.8"
 
-  val verAkka = "2.3.12"
   val _akkaActor = "com.typesafe.akka" %% "akka-actor" % verAkka
   val _akkaSlf4j = "com.typesafe.akka" %% "akka-slf4j" % verAkka
+  val _akkaStream = "com.typesafe.akka" %% "akka-stream" % verAkka
+  val _akkaHttp = "com.typesafe.akka" %% "akka-http-experimental" % verAkka
 
-  val _logback = "ch.qos.logback" % "logback-classic" % "1.1.3"
+  val _ssc = "com.elderresearch" %% "ssc" % "0.2.0"
+
+  val _guice = "com.google.inject" % "guice" % "4.1.0"
+
+  val _redisclient = "net.debasishg" %% "redisclient" % "3.0"
+
+  val _logback = "ch.qos.logback" % "logback-classic" % "1.1.+"
   val _commonsEmail = "org.apache.commons" % "commons-email" % "1.4"
-  val _reactivemongo = "org.reactivemongo" %% "reactivemongo" % "0.11.5"
-  val _guava = "com.google.guava" % "guava" % "18.0"
-  val _activemqClient = "org.apache.activemq" % "activemq-client" % "5.11.1"
+  val _reactivemongo = "org.reactivemongo" %% "reactivemongo" % "0.11.+"
+  val _guava = "com.google.guava" % "guava" % "19.+"
+  val _activemqClient = "org.apache.activemq" % "activemq-client" % "5.13.+"
 
 }
 
