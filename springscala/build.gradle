@@ -1,78 +1,102 @@
 buildscript {
-	ext {
-		springBootVersion = '1.4.0.RELEASE'
+    ext {
+        springBootVersion = '1.4.0.RELEASE'
         scalaVersion = '2.11.8'
         scalaLibVersion = '2.11'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    }
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
 }
 
 task wrapper(type: Wrapper) {
-  description = 'Generates gradlew[.bat] scripts'
-  gradleVersion = '2.14.1'
-}
-
-allprojects {
-    group = 'me.yangbajing.demospringscala'
-    version = '1.0'
-
-	sourceCompatibility = 1.8
-	targetCompatibility = 1.8
+    description = 'Generates gradlew[.bat] scripts'
+    gradleVersion = '2.14.1'
 }
 
 subprojects {
+    apply plugin: 'java'
+    apply plugin: 'scala'
+    //apply plugin: 'eclipse'
+    apply plugin: 'spring-boot'
 
-	apply plugin: 'java'
-	apply plugin: 'scala'
-	//apply plugin: 'eclipse'
-	apply plugin: 'spring-boot'
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
 
-	repositories {
-		mavenCentral()
-        jcentral()
-	}
+    group = 'me.yangbajing.demospringscala'
+    version = '1.0'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
-	dependencies {
-		//compile('org.springframework.boot:spring-boot-starter-actuator')
-		//compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
-		//compile('org.springframework.boot:spring-boot-starter-data-jpa')
-		//compile('org.springframework.boot:spring-boot-starter-data-redis')
-		//compile('org.springframework.boot:spring-boot-devtools')
-		//compile('org.springframework.boot:spring-boot-starter-jooq')
-		//compile('org.springframework.boot:spring-boot-starter-mail')
-		compile('org.springframework.boot:spring-boot-starter-web')
+    compileJava {
+        options.encoding = 'UTF-8'
+        options.compilerArgs << "-Xlint:deprecation" << "-Xlint:-options"
+    }
+
+    dependencies {
+        compile('org.springframework.boot:spring-boot-starter-actuator')
+        //compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
+        //compile('org.springframework.boot:spring-boot-starter-data-jpa')
+        //compile('org.springframework.boot:spring-boot-starter-data-redis')
+        compile('org.springframework.boot:spring-boot-devtools')
+        //compile('org.springframework.boot:spring-boot-starter-jooq')
+        compile('org.springframework.boot:spring-boot-starter-mail')
+        compile('org.springframework.boot:spring-boot-starter-web')
         compile("org.scala-lang:scala-library:$scalaVersion")
-        //compile("org.scala-lang:scala-reflect:$scalaVersion")
-        //optional("com.fasterxml.jackson.module:jackson-module-scala_$scalaLibVersion:2.7.5")
-		testCompile('org.springframework.boot:spring-boot-starter-test')
-	}
+        compile("org.scala-lang:scala-reflect:$scalaVersion")
+        compile("com.fasterxml.jackson.module:jackson-module-scala_$scalaLibVersion:2.8.0.rc2")
+        testCompile('org.springframework.boot:spring-boot-starter-test')
+    }
 
-	//Java compiler settings
-	tasks.withType(JavaCompile) {
-		//ignore conjunction warning
-		options.compilerArgs << '-Xlint:-options'
-	}
+    sourceSets {
+        main {
+            scala {
+                srcDirs = ['src/main/scala', 'src/main/java']
+            }
+            java {
+                srcDirs = []
+            }
+        }
+        test {
+            scala {
+                srcDirs = ['src/main/scala', 'src/main/java']
+            }
+            java {
+                srcDirs = []
+            }
+        }
+    }
 
-	tasks.withType(ScalaCompile) {
-	  scalaCompileOptions.additionalParameters = ["-feature", "-language:implicitConversions", "-language:reflectiveCalls"]
-	  scalaCompileOptions.useAnt = false
-	}
+    //Java compiler settings
+    tasks.withType(JavaCompile) {
+        //ignore conjunction warning
+        options.compilerArgs << '-Xlint:-options'
+    }
+
+    tasks.withType(ScalaCompile) {
+        scalaCompileOptions.additionalParameters = ["-feature", "-language:implicitConversions", "-language:reflectiveCalls"]
+        scalaCompileOptions.useAnt = false
+        scalaCompileOptions.with {
+            force = true
+        }
+    }
 
     jar {
         manifest.attributes provider: 'gradle'
     }
 
-	//eclipse {
-	//	classpath {
-	//		 containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
-	//		 containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
-	//	}
-	//}
+    //eclipse {
+    //	classpath {
+    //		 containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+    //		 containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+    //	}
+    //}
 
 }
 
