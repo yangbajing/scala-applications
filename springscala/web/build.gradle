@@ -1,0 +1,11 @@
+description = 'springscala-web'
+
+jar {
+	baseName = 'springscala-web'
+	version = '0.0.1-SNAPSHOT'
+}
+
+dependencies {
+    compile project(':common')
+}
+

@@ -1,0 +1,78 @@
+buildscript {
+	ext {
+		springBootVersion = '1.4.0.RELEASE'
+        scalaVersion = '2.11.8'
+        scalaLibVersion = '2.11'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+task wrapper(type: Wrapper) {
+  description = 'Generates gradlew[.bat] scripts'
+  gradleVersion = '2.14.1'
+}
+
+allprojects {
+    group = 'me.yangbajing.demospringscala'
+    version = '1.0'
+
+	sourceCompatibility = 1.8
+	targetCompatibility = 1.8
+}
+
+subprojects {
+
+	apply plugin: 'java'
+	apply plugin: 'scala'
+	//apply plugin: 'eclipse'
+	apply plugin: 'spring-boot'
+
+	repositories {
+		mavenCentral()
+        jcentral()
+	}
+
+	dependencies {
+		//compile('org.springframework.boot:spring-boot-starter-actuator')
+		//compile('org.springframework.boot:spring-boot-starter-data-elasticsearch')
+		//compile('org.springframework.boot:spring-boot-starter-data-jpa')
+		//compile('org.springframework.boot:spring-boot-starter-data-redis')
+		//compile('org.springframework.boot:spring-boot-devtools')
+		//compile('org.springframework.boot:spring-boot-starter-jooq')
+		//compile('org.springframework.boot:spring-boot-starter-mail')
+		compile('org.springframework.boot:spring-boot-starter-web')
+        compile("org.scala-lang:scala-library:$scalaVersion")
+        //compile("org.scala-lang:scala-reflect:$scalaVersion")
+        //optional("com.fasterxml.jackson.module:jackson-module-scala_$scalaLibVersion:2.7.5")
+		testCompile('org.springframework.boot:spring-boot-starter-test')
+	}
+
+	//Java compiler settings
+	tasks.withType(JavaCompile) {
+		//ignore conjunction warning
+		options.compilerArgs << '-Xlint:-options'
+	}
+
+	tasks.withType(ScalaCompile) {
+	  scalaCompileOptions.additionalParameters = ["-feature", "-language:implicitConversions", "-language:reflectiveCalls"]
+	  scalaCompileOptions.useAnt = false
+	}
+
+    jar {
+        manifest.attributes provider: 'gradle'
+    }
+
+	//eclipse {
+	//	classpath {
+	//		 containers.remove('org.eclipse.jdt.launching.JRE_CONTAINER')
+	//		 containers 'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+	//	}
+	//}
+
+}
+
