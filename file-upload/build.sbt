@@ -37,6 +37,8 @@ javacOptions ++= Seq(
 
 javaOptions += "-Dproject.base=" + baseDirectory.value
 
+scalafmtOnCompile in ThisBuild := true
+
 resolvers ++= Seq(
   "Typesafe Repository" at "http://repo.typesafe.com/typesafe/releases/",
   "Sonatype releases" at "http://oss.sonatype.org/content/repositories/releases",
@@ -49,23 +51,35 @@ assemblyJarName in assembly := "file-upload.jar"
 mainClass in assembly := Some("me.yangbajing.fileupload.Main")
 
 libraryDependencies ++= Seq(
-  _akkaActor,
-  _akkaSlf4j,
-  _akkaHttp,
-  _logback,
   _typesafeConfig,
+  _logback,
   _scalaLogging,
   _scalatest
-)
+) ++ _akkas ++ _akkaHttps ++ _jsons
 
-val verAkka = "2.5.18"
-lazy val _scalatest = "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+lazy val _scalatest = "org.scalatest" %% "scalatest" % "3.0.5" % Test
 lazy val _typesafeConfig = "com.typesafe" % "config" % "1.3.3"
 lazy val _scalaLogging = ("com.typesafe.scala-logging" %% "scala-logging" % "3.9.2")
   .exclude("org.scala-lang", "scala-library")
   .exclude("org.scala-lang", "scala-reflect")
-lazy val _akkaHttp = "com.typesafe.akka" %% "akka-http" % "10.1.6"
-lazy val _akkaActor = "com.typesafe.akka" %% "akka-actor" % verAkka
-lazy val _akkaSlf4j = "com.typesafe.akka" %% "akka-slf4j" % verAkka
+
+lazy val _akkaHttps = Seq(
+  "com.typesafe.akka" %% "akka-http" % "10.1.6",
+  "com.typesafe.akka" %% "akka-http-testkit" % "10.1.6" % Test
+)
 lazy val _logback = "ch.qos.logback" % "logback-classic" % "1.2.3"
 
+val verAkka = "2.5.19"
+lazy val _akkas = Seq(
+  "com.typesafe.akka" %% "akka-actor" % verAkka,
+  "com.typesafe.akka" %% "akka-stream" % verAkka,
+  "com.typesafe.akka" %% "akka-slf4j" % verAkka
+)
+
+val versionJackson = "2.9.6"
+lazy val _jsons = Seq(
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jdk8" % versionJackson,
+  "com.fasterxml.jackson.datatype" % "jackson-datatype-jsr310" % versionJackson,
+  "com.fasterxml.jackson.module" % "jackson-module-parameter-names" % versionJackson,
+  "com.fasterxml.jackson.module" %% "jackson-module-scala" % versionJackson
+)

@@ -1,0 +1,92 @@
+package me.yangbajing.fileupload.util
+
+import java.nio.file.StandardOpenOption.APPEND
+import java.nio.file._
+import java.security.MessageDigest
+
+import akka.stream.Materializer
+import akka.stream.scaladsl.FileIO
+import com.typesafe.scalalogging.StrictLogging
+import me.yangbajing.fileupload.Constants
+import me.yangbajing.fileupload.model.{FileBO, FileInfo, FileMeta}
+
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
+
+object FileUtils extends StrictLogging {
+  val TMP_DIR: Path = getOrCreateDirectories(Paths.get("/tmp/file-upload/tmp"))
+
+  val LOCAL_PATH: String = getOrCreateDirectories(Paths.get("/tmp/file-upload")).toString
+
+  def getOrCreateDirectories(path: Path): Path = {
+    if (!Files.isDirectory(path)) {
+      Files.createDirectories(path)
+    }
+    path
+  }
+
+  def getLocalPath(hash: String): Path = Paths.get(LOCAL_PATH, hash.take(2), hash)
+
+  def getFileMeta(hash: String): Option[FileMeta] = {
+    if (hash == null || Constants.HASH_LENGTH != hash.length) {
+      None
+    } else {
+      val path = getLocalPath(hash)
+      if (Files.exists(path) && Files.isReadable(path)) Some(FileMeta(hash, Files.size(path), path)) else None
+    }
+  }
+
+  def uploadFile(fileInfo: FileInfo)(implicit mat: Materializer, ec: ExecutionContext): Future[FileBO] = {
+    // TODO 需要校验上传完成文件的hash值与提交hash值是否匹配？
+    val maybeMeta = FileUtils.getFileMeta(fileInfo.hash)
+    val beContinue = maybeMeta.isDefined && fileInfo.startPosition > 0L
+    val f = if (beContinue) uploadContinue(fileInfo, maybeMeta.get) else uploadNewFile(fileInfo)
+    f.andThen {
+      case tryValue =>
+        logger.debug(s"文件上传完成：$tryValue")
+    }
+  }
+
+  private def uploadContinue(fileInfo: FileInfo, meta: FileMeta)(implicit mat: Materializer, ec: ExecutionContext) = {
+    val bodyPart = fileInfo.bodyPart
+    val localPath = FileUtils.getLocalPath(fileInfo.hash)
+    logger.debug(s"断点续传，startPosition：${fileInfo.startPosition}，路径：$localPath")
+    val hash = fileInfo.hash
+    bodyPart.entity.dataBytes
+      .runWith(FileIO.toPath(localPath, Set(APPEND), fileInfo.startPosition))
+      .map(ioResult => FileBO(hash, localPath, meta.size + ioResult.count, bodyPart.filename, bodyPart.headers))
+  }
+
+  private def uploadNewFile(fileInfo: FileInfo)(implicit mat: Materializer, ec: ExecutionContext) = {
+    val bodyPart = fileInfo.bodyPart
+    val tmpPath = Files.createTempFile(FileUtils.TMP_DIR, bodyPart.filename.getOrElse(""), "")
+    val sha = MessageDigest.getInstance("SHA-256")
+    logger.debug(s"新文件，路径：$tmpPath")
+    bodyPart.entity.dataBytes
+      .map { byteString =>
+        byteString.asByteBuffers.foreach(sha.update)
+        byteString
+      }
+      .runWith(FileIO.toPath(tmpPath))
+      .map { ioResult =>
+        val hash = Utils.bytesToHex(sha.digest())
+        val localPath = move(hash, tmpPath, ioResult.count)
+        FileBO(hash, localPath, ioResult.count, bodyPart.filename, bodyPart.headers)
+      }
+  }
+
+  def move(hash: String, tmpFile: Path, contentLength: Long): Path =
+    try {
+      val targetDir = FileUtils.getOrCreateDirectories(Paths.get(FileUtils.LOCAL_PATH, hash.take(2)))
+      val target = targetDir.resolve(hash)
+      if (!Files.exists(target)) {
+        Files.move(tmpFile, target)
+      }
+      target
+    } catch {
+      case NonFatal(e) =>
+        e.printStackTrace()
+        throw e
+    }
+
+}
