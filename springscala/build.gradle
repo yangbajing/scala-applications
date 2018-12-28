@@ -1,7 +1,7 @@
 buildscript {
     ext {
         springBootVersion = '1.4.0.RELEASE'
-        scalaVersion = '2.11.8'
+        scalaVersion = '2.11.12'
         scalaLibVersion = '2.11'
     }
     repositories {

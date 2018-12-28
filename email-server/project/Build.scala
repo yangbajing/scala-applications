@@ -16,7 +16,7 @@ object Build extends Build {
       organization := "me.yangbajing",
       organizationHomepage := Some(new URL("https://github.com/yangbajing/scala-applications")),
       startYear := Some(2015),
-      scalaVersion := "2.11.8",
+      scalaVersion := "2.11.12",
       scalacOptions ++= Seq(
         "-encoding", "utf8",
         "-unchecked",
@@ -55,14 +55,14 @@ object Build extends Build {
         _scalaLogging,
         _scalatest))
 
-  val _scalaReflect = "org.scala-lang" %  "scala-reflect"  % "2.11.8"
+  val _scalaReflect = "org.scala-lang" %  "scala-reflect"  % "2.11.12"
   val _scalaXml = "org.scala-lang.modules" %% "scala-xml" % "1.0.+"
   val _scalatest = "org.scalatest" %% "scalatest" % "2.2.+" % "test"
   val _typesafeConfig = "com.typesafe" % "config" % "1.3.+"
   val _scalaLogging = ("com.typesafe.scala-logging" %% "scala-logging" % "3.4.0").exclude("org.scala-lang", "scala-library").exclude("org.scala-lang", "scala-reflect")
 
 //  val _akkaHttpPlayJson = "de.heikoseeberger" %% "akka-http-play-json" % "1.0.0"
-  val verAkka = "2.4.8"
+  val verAkka = "2.4.19"
 
   val _akkaActor = "com.typesafe.akka" %% "akka-actor" % verAkka
   val _akkaSlf4j = "com.typesafe.akka" %% "akka-slf4j" % verAkka

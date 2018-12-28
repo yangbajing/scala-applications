@@ -1,4 +1,4 @@
-scalaVersion := "2.11.8"
+scalaVersion := "2.12.6"
 
 scalacOptions ++= Seq(
   "-encoding", "utf8",
@@ -8,6 +8,6 @@ scalacOptions ++= Seq(
 )
 
 libraryDependencies ++= Seq(
-  "com.typesafe.akka" %% "akka-actor" % "2.4.7"
+  "com.typesafe.akka" %% "akka-actor" % "2.5.14"
 )
 

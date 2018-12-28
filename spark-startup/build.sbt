@@ -1,4 +1,4 @@
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.12"
 
 scalacOptions ++= Seq(
   "-encoding", "utf8",
@@ -14,12 +14,12 @@ assemblyOption in assembly := (assemblyOption in assembly).value.copy(includeSca
 test in assembly := {}
 
 
-val verSpark = "1.5.2"
-val verHadoop = "2.6.2"
+val verSpark = "2.3.1"
+val verHadoop = "2.7.5"
       
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-core" % "1.5.2" % "provided,test",
   "org.apache.spark" %% "spark-sql" % "1.5.2" % "provided,test",
-  "org.scalatest" %% "scalatest" % "2.2.6" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
