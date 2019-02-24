@@ -12,7 +12,7 @@ trait FileService {
   implicit val system: ActorSystem
   implicit val mat: ActorMaterializer
 
-  def progressByHash(hash: String): Future[FileMeta]
+  def progressByHash(hash: String): Future[Option[FileMeta]]
 
   def handleUpload(formData: Multipart.FormData): Future[Seq[FileBO]]
 

@@ -11,7 +11,6 @@ import me.yangbajing.fileupload.Constants
 import me.yangbajing.fileupload.model.{FileBO, FileInfo, FileMeta}
 
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.control.NonFatal
 
 object FileUtils extends StrictLogging {
   val TMP_DIR: Path = getOrCreateDirectories(Paths.get("/tmp/file-upload/tmp"))
@@ -38,7 +37,7 @@ object FileUtils extends StrictLogging {
 
   def uploadFile(fileInfo: FileInfo)(implicit mat: Materializer, ec: ExecutionContext): Future[FileBO] = {
     // TODO 需要校验上传完成文件的hash值与提交hash值是否匹配？
-    val maybeMeta = FileUtils.getFileMeta(fileInfo.hash)
+    val maybeMeta = fileInfo.hash.flatMap(FileUtils.getFileMeta)
     val beContinue = maybeMeta.isDefined && fileInfo.startPosition > 0L
     val f = if (beContinue) uploadContinue(fileInfo, maybeMeta.get) else uploadNewFile(fileInfo)
     f.andThen {
@@ -49,17 +48,19 @@ object FileUtils extends StrictLogging {
 
   private def uploadContinue(fileInfo: FileInfo, meta: FileMeta)(implicit mat: Materializer, ec: ExecutionContext) = {
     val bodyPart = fileInfo.bodyPart
-    val localPath = FileUtils.getLocalPath(fileInfo.hash)
+    val localPath = FileUtils.getLocalPath(fileInfo.hash.get)
     logger.debug(s"断点续传，startPosition：${fileInfo.startPosition}，路径：$localPath")
-    val hash = fileInfo.hash
     bodyPart.entity.dataBytes
       .runWith(FileIO.toPath(localPath, Set(APPEND), fileInfo.startPosition))
-      .map(ioResult => FileBO(hash, localPath, meta.size + ioResult.count, bodyPart.filename, bodyPart.headers))
+      .map(ioResult =>
+        FileBO(fileInfo.hash, None, localPath, meta.size + ioResult.count, bodyPart.filename, bodyPart.headers))
   }
 
   private def uploadNewFile(fileInfo: FileInfo)(implicit mat: Materializer, ec: ExecutionContext) = {
     val bodyPart = fileInfo.bodyPart
-    val tmpPath = Files.createTempFile(FileUtils.TMP_DIR, bodyPart.filename.getOrElse(""), "")
+    val tmpPath = fileInfo.hash
+      .map(h => FileUtils.getLocalPath(h))
+      .getOrElse(Files.createTempFile(FileUtils.TMP_DIR, bodyPart.filename.getOrElse(""), ""))
     val sha = MessageDigest.getInstance("SHA-256")
     logger.debug(s"新文件，路径：$tmpPath")
     bodyPart.entity.dataBytes
@@ -69,24 +70,23 @@ object FileUtils extends StrictLogging {
       }
       .runWith(FileIO.toPath(tmpPath))
       .map { ioResult =>
-        val hash = Utils.bytesToHex(sha.digest())
-        val localPath = move(hash, tmpPath, ioResult.count)
-        FileBO(hash, localPath, ioResult.count, bodyPart.filename, bodyPart.headers)
+        val computedHash = Utils.bytesToHex(sha.digest())
+        fileInfo.hash.foreach { h =>
+          require(h == computedHash, s"前端上传hash与服务端计算hash值不匹配，$h != $computedHash")
+        }
+        val localPath = fileInfo.hash match {
+          case Some(_) => tmpPath
+          case _       => move(computedHash, tmpPath, ioResult.count)
+        }
+        FileBO(fileInfo.hash, Some(computedHash), localPath, ioResult.count, bodyPart.filename, bodyPart.headers)
       }
   }
 
-  def move(hash: String, tmpFile: Path, contentLength: Long): Path =
-    try {
-      val targetDir = FileUtils.getOrCreateDirectories(Paths.get(FileUtils.LOCAL_PATH, hash.take(2)))
-      val target = targetDir.resolve(hash)
-      if (!Files.exists(target)) {
-        Files.move(tmpFile, target)
-      }
-      target
-    } catch {
-      case NonFatal(e) =>
-        e.printStackTrace()
-        throw e
-    }
+  def move(hash: String, tmpFile: Path, contentLength: Long): Path = {
+    val targetDir = FileUtils.getOrCreateDirectories(Paths.get(FileUtils.LOCAL_PATH, hash.take(2)))
+    val target = targetDir.resolve(hash)
+    require(!Files.exists(target), s"目标文件已存在，$target")
+    Files.move(tmpFile, target)
+  }
 
 }
