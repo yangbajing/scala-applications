@@ -20,17 +20,10 @@ pipeline {
         stage("构建") {
             steps {
                 echo "构建中..."
-                sh 'go version'
-                sh 'node -v'
-                sh 'java -version'
-                sh 'php -v'
-                sh 'python -V'
-                sh 'gcc -v'
-                sh 'make -v'
                 // 请在这里放置您项目代码的单元测试调用过程，例如:
                 // sh 'mvn package' // mvn 示例
                 // sh 'make' // make 示例
-                ./sbt package
+                sh './sbt test assembly'
                 echo "构建完成."
                 // archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true // 收集构建产物
             }
