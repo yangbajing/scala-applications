@@ -50,30 +50,36 @@ assemblyJarName in assembly := "file-upload.jar"
 
 mainClass in assembly := Some("me.yangbajing.fileupload.Main")
 
+resolvers ++= Seq(
+  "ihongka.cn sbt".at("https://artifactory.hongkazhijia.com/artifactory/sbt-release"),
+  "ihongka.cn maven".at("https://artifactory.hongkazhijia.com/artifactory/libs-release"))
+
 libraryDependencies ++= Seq(
+  "com.helloscala.fusion"      %% "helloscala-common"   % "1.0.0-alpha14",
   _typesafeConfig,
   _logback,
   _scalaLogging,
   _scalatest
 ) ++ _akkas ++ _akkaHttps ++ _jsons
 
-lazy val _scalatest = "org.scalatest" %% "scalatest" % "3.0.5" % Test
+lazy val _scalatest = "org.scalatest" %% "scalatest" % "3.0.7" % Test
 lazy val _typesafeConfig = "com.typesafe" % "config" % "1.3.3"
 lazy val _scalaLogging = ("com.typesafe.scala-logging" %% "scala-logging" % "3.9.2")
   .exclude("org.scala-lang", "scala-library")
   .exclude("org.scala-lang", "scala-reflect")
 
 lazy val _akkaHttps = Seq(
-  "com.typesafe.akka" %% "akka-http" % "10.1.6",
-  "com.typesafe.akka" %% "akka-http-testkit" % "10.1.6" % Test
+  "com.typesafe.akka" %% "akka-http" % "10.1.8",
+  "com.typesafe.akka" %% "akka-http-testkit" % "10.1.8" % Test
 )
 lazy val _logback = "ch.qos.logback" % "logback-classic" % "1.2.3"
 
-val verAkka = "2.5.19"
+val verAkka = "2.5.22"
 lazy val _akkas = Seq(
   "com.typesafe.akka" %% "akka-actor" % verAkka,
   "com.typesafe.akka" %% "akka-stream" % verAkka,
-  "com.typesafe.akka" %% "akka-slf4j" % verAkka
+  "com.typesafe.akka" %% "akka-slf4j" % verAkka,
+  "com.typesafe.akka" %% "akka-stream-testkit" % verAkka % Test
 )
 
 val versionJackson = "2.9.6"
