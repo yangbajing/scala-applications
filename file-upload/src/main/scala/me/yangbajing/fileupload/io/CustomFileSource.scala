@@ -2,21 +2,32 @@ package me.yangbajing.fileupload.io
 
 import java.nio.ByteBuffer
 import java.nio.channels.FileChannel
-import java.nio.file.{Files, NoSuchFileException, Path, StandardOpenOption}
+import java.nio.file.Files
+import java.nio.file.NoSuchFileException
+import java.nio.file.Path
+import java.nio.file.StandardOpenOption
 
 import akka.Done
 import akka.stream.Attributes.InputBuffer
-import akka.stream.{Attributes, IOResult, Outlet, SourceShape}
-import akka.stream.stage.{GraphStageLogic, GraphStageWithMaterializedValue, OutHandler}
+import akka.stream.Attributes
+import akka.stream.IOResult
+import akka.stream.Outlet
+import akka.stream.SourceShape
+import akka.stream.stage.GraphStageLogic
+import akka.stream.stage.GraphStageWithMaterializedValue
+import akka.stream.stage.OutHandler
 import akka.util.ByteString
 
 import scala.annotation.tailrec
-import scala.concurrent.{Future, Promise}
-import scala.util.{Failure, Success, Try}
+import scala.concurrent.Future
+import scala.concurrent.Promise
+import scala.util.Failure
+import scala.util.Success
+import scala.util.Try
 import scala.util.control.NonFatal
 
 final class CustomFileSource(path: Path, chunkSize: Int, startPosition: Long = 0, endPosition: Long = -1L)
-  extends GraphStageWithMaterializedValue[SourceShape[ByteString], Future[IOResult]] {
+    extends GraphStageWithMaterializedValue[SourceShape[ByteString], Future[IOResult]] {
   require(chunkSize > 0, "chunkSize must be greater than 0")
   val out = Outlet[ByteString]("FileSource.out")
 

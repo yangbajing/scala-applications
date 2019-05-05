@@ -8,13 +8,15 @@ import akka.stream.Materializer
 import akka.stream.scaladsl.FileIO
 import com.typesafe.scalalogging.StrictLogging
 import me.yangbajing.fileupload.Constants
-import me.yangbajing.fileupload.model.{FileBO, FileInfo, FileMeta}
+import me.yangbajing.fileupload.model.FileBO
+import me.yangbajing.fileupload.model.FileInfo
+import me.yangbajing.fileupload.model.FileMeta
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
 
 object FileUtils extends StrictLogging {
-  val TMP_DIR: Path = getOrCreateDirectories(Paths.get("/tmp/file-upload/tmp"))
-
+  val TMP_DIR: Path      = getOrCreateDirectories(Paths.get("/tmp/file-upload/tmp"))
   val LOCAL_PATH: String = getOrCreateDirectories(Paths.get("/tmp/file-upload")).toString
 
   def getOrCreateDirectories(path: Path): Path = {
@@ -37,9 +39,9 @@ object FileUtils extends StrictLogging {
 
   def uploadFile(fileInfo: FileInfo)(implicit mat: Materializer, ec: ExecutionContext): Future[FileBO] = {
     // TODO 需要校验上传完成文件的hash值与提交hash值是否匹配？
-    val maybeMeta = fileInfo.hash.flatMap(FileUtils.getFileMeta)
+    val maybeMeta  = fileInfo.hash.flatMap(FileUtils.getFileMeta)
     val beContinue = maybeMeta.isDefined && fileInfo.startPosition > 0L
-    val f = if (beContinue) uploadContinue(fileInfo, maybeMeta.get) else uploadNewFile(fileInfo)
+    val f          = if (beContinue) uploadContinue(fileInfo, maybeMeta.get) else uploadNewFile(fileInfo)
     f.andThen {
       case tryValue =>
         logger.debug(s"文件上传完成：$tryValue")
@@ -47,7 +49,7 @@ object FileUtils extends StrictLogging {
   }
 
   private def uploadContinue(fileInfo: FileInfo, meta: FileMeta)(implicit mat: Materializer, ec: ExecutionContext) = {
-    val bodyPart = fileInfo.bodyPart
+    val bodyPart  = fileInfo.bodyPart
     val localPath = FileUtils.getLocalPath(fileInfo.hash.get)
     logger.debug(s"断点续传，startPosition：${fileInfo.startPosition}，路径：$localPath")
     bodyPart.entity.dataBytes
@@ -84,7 +86,7 @@ object FileUtils extends StrictLogging {
 
   def move(hash: String, tmpFile: Path, contentLength: Long): Path = {
     val targetDir = FileUtils.getOrCreateDirectories(Paths.get(FileUtils.LOCAL_PATH, hash.take(2)))
-    val target = targetDir.resolve(hash)
+    val target    = targetDir.resolve(hash)
     require(!Files.exists(target), s"目标文件已存在，$target")
     Files.move(tmpFile, target)
   }

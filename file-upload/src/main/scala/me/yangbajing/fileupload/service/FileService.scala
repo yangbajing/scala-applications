@@ -3,7 +3,8 @@ package me.yangbajing.fileupload.service
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.Multipart
 import akka.stream.ActorMaterializer
-import me.yangbajing.fileupload.model.{FileBO, FileMeta}
+import me.yangbajing.fileupload.model.FileBO
+import me.yangbajing.fileupload.model.FileMeta
 
 import scala.concurrent.Future
 

@@ -4,17 +4,19 @@ import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import com.typesafe.scalalogging.StrictLogging
-import me.yangbajing.fileupload.controller.{FileRoute, HtmlRoute}
+import me.yangbajing.fileupload.controller.FileRoute
+import me.yangbajing.fileupload.controller.HtmlRoute
 import me.yangbajing.fileupload.service.FileService
 import akka.http.scaladsl.server.Directives._
 
-import scala.util.{Failure, Success}
+import scala.util.Failure
+import scala.util.Success
 
 object Main extends StrictLogging {
 
   def main(args: Array[String]): Unit = {
     implicit val system = ActorSystem()
-    implicit val mat = ActorMaterializer()
+    implicit val mat    = ActorMaterializer()
 
     val host = "127.0.0.1"
     val port = 33333

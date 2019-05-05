@@ -1,10 +1,13 @@
 package me.yangbajing.fileupload.util
-import akka.http.scaladsl.marshalling.{Marshaller, ToEntityMarshaller}
+import akka.http.scaladsl.marshalling.Marshaller
+import akka.http.scaladsl.marshalling.ToEntityMarshaller
 import akka.http.scaladsl.model.MediaTypes
-import akka.http.scaladsl.unmarshalling.{FromEntityUnmarshaller, Unmarshaller}
+import akka.http.scaladsl.unmarshalling.FromEntityUnmarshaller
+import akka.http.scaladsl.unmarshalling.Unmarshaller
 import akka.util.ByteString
 import com.fasterxml.jackson.core.util.DefaultPrettyPrinter
-import com.fasterxml.jackson.databind.{JsonNode, ObjectMapper}
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 
 import scala.reflect.ClassTag
 
@@ -34,7 +37,7 @@ object JacksonSupport extends JacksonSupport {
     !isSuccess(content)
 
   def isSuccess(content: String)(implicit objectMapper: ObjectMapper = Jackson.defaultObjectMapper): Boolean = {
-    val node = getJsonNode(content)
+    val node    = getJsonNode(content)
     val errCode = node.get("errCode")
     if (errCode eq null) true else errCode.asInt(0) == 0
   }
@@ -46,12 +49,10 @@ object JacksonSupport extends JacksonSupport {
 trait JacksonSupport {
 
   private val jsonStringUnmarshaller =
-    Unmarshaller.byteStringUnmarshaller
-      .forContentTypes(MediaTypes.`application/json`)
-      .mapWithCharset {
-        case (ByteString.empty, _) => throw Unmarshaller.NoContentException
-        case (data, charset)       => data.decodeString(charset.nioCharset.name)
-      }
+    Unmarshaller.byteStringUnmarshaller.forContentTypes(MediaTypes.`application/json`).mapWithCharset {
+      case (ByteString.empty, _) => throw Unmarshaller.NoContentException
+      case (data, charset)       => data.decodeString(charset.nioCharset.name)
+    }
 
   private val jsonStringMarshaller = Marshaller.stringMarshaller(MediaTypes.`application/json`)
 

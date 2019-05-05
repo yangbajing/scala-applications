@@ -5,19 +5,20 @@ import java.util.Objects
 import akka.actor.ActorSystem
 import akka.http.scaladsl.model.Multipart
 import akka.stream.scaladsl.Sink
-import akka.stream.{ActorMaterializer, Materializer}
+import akka.stream.ActorMaterializer
+import akka.stream.Materializer
 import com.typesafe.scalalogging.StrictLogging
 import me.yangbajing.fileupload.Constants
-import me.yangbajing.fileupload.model.{FileBO, FileInfo, FileMeta}
+import me.yangbajing.fileupload.model.FileBO
+import me.yangbajing.fileupload.model.FileInfo
+import me.yangbajing.fileupload.model.FileMeta
 import me.yangbajing.fileupload.util.FileUtils
 
 import scala.concurrent.Future
 import scala.concurrent.duration._
 
-class FileServiceImpl(
-    val system: ActorSystem,
-    implicit val mat: ActorMaterializer
-) extends FileService
+class FileServiceImpl(val system: ActorSystem, implicit val mat: ActorMaterializer)
+    extends FileService
     with StrictLogging {
 
   override def progressByHash(hash: String): Future[Option[FileMeta]] = {
@@ -49,12 +50,13 @@ class FileServiceImpl(
     fileInfo.hash.flatMap(FileUtils.getFileMeta) match {
       case Some(fileMeta) if fileInfo.contentLength == fileMeta.size => // 已上传完成
         Future.successful(
-          FileBO(fileInfo.hash,
-                 Some(fileMeta.hash),
-                 fileMeta.localPath,
-                 fileMeta.size,
-                 bodyPart.filename,
-                 bodyPart.headers))
+          FileBO(
+            fileInfo.hash,
+            Some(fileMeta.hash),
+            fileMeta.localPath,
+            fileMeta.size,
+            bodyPart.filename,
+            bodyPart.headers))
       case _ =>
         FileUtils.uploadFile(fileInfo)
     }
@@ -66,15 +68,13 @@ class FileServiceImpl(
       case Array(_) =>
         Future.successful(fileInfo.copy(bodyPart = part))
       case Array(_, "hash") =>
-        part.entity
-          .toStrict(1.second)
-          .flatMap { entity =>
-            val hash = entity.data.utf8String
-            if (Constants.HASH_LENGTH != hash.length)
-              Future.failed(new IllegalArgumentException("hash值应为64位sha256的16进制字符串"))
-            else
-              Future.successful(fileInfo.copy(hash = Some(hash.toLowerCase)))
-          }
+        part.entity.toStrict(1.second).flatMap { entity =>
+          val hash = entity.data.utf8String
+          if (Constants.HASH_LENGTH != hash.length)
+            Future.failed(new IllegalArgumentException("hash值应为64位sha256的16进制字符串"))
+          else
+            Future.successful(fileInfo.copy(hash = Some(hash.toLowerCase)))
+        }
       case Array(_, "contentLength") =>
         part.entity.toStrict(1.second).map(entity => fileInfo.copy(contentLength = entity.data.utf8String.toLong))
       case Array(_, "startPosition") =>

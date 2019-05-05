@@ -6,7 +6,7 @@ object Utils {
 
   def bytesToHex(bytes: Array[Byte]): String = {
     val hexChars = new Array[Char](bytes.length * 2)
-    var j = 0
+    var j        = 0
     while (j < bytes.length) {
       val v = bytes(j) & 0xFF
       hexChars(j * 2) = hexArray(v >>> 4)

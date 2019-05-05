@@ -41,5 +41,4 @@ case class FileBO(
     localPath: Path,
     contentLength: Long,
     filename: Option[String],
-    headers: immutable.Seq[HttpHeader]
-)
+    headers: immutable.Seq[HttpHeader])
