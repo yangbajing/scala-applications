@@ -18,6 +18,7 @@ import akka.stream.Attributes
 import akka.stream.scaladsl.FileIO
 import akka.stream.scaladsl.Source
 import akka.testkit.TestKit
+import com.fasterxml.jackson.databind.node.ArrayNode
 import com.fasterxml.jackson.databind.node.ObjectNode
 import helloscala.common.util.DigestUtils
 import me.yangbajing.fileupload.io.CustomFileSource
@@ -38,23 +39,26 @@ class FileRouteTest extends TestKit(ActorSystem("file-demo")) with FunSuiteLike 
   private val BASE_URL     = "http://118.89.226.54:8083"
   implicit private val mat = ActorMaterializer()
 
+  val CHUNK_SIZE    = 8192
   val file          = Paths.get("/opt/Videos/VID_20190322_104457.mp4")
   val hash          = DigestUtils.sha256HexFromPath(file)
   val fileLength    = Files.size(file)
   var startPosition = 0L
 
   test("upload/continue 大文件") {
+    // 只上传文件的一半内容
     val truncateSize = fileLength / 2
-    val onlyUploadPartialSize = 8192
+
     val bodyPart = Multipart.FormData.BodyPart(
       s"$hash.$fileLength.0",
       HttpEntity.Default(
         ContentType(MediaTypes.`video/mp4`),
         fileLength,
         Source
-          .fromGraph(new CustomFileSource(file, onlyUploadPartialSize, 0L, truncateSize))
+          .fromGraph(new CustomFileSource(file, CHUNK_SIZE, 0L, truncateSize))
           .withAttributes(Attributes(Attributes.Name("file")))),
       Map("filename" → file.getFileName.toString))
+
     val formData = Multipart.FormData(bodyPart)
     val request =
       HttpRequest(HttpMethods.POST, s"$BASE_URL/file/ihongka_files/upload/continue", entity = formData.toEntity())
@@ -77,18 +81,20 @@ class FileRouteTest extends TestKit(ActorSystem("file-demo")) with FunSuiteLike 
     import me.yangbajing.fileupload.util.JacksonSupport._
     val bodyPart = Multipart.FormData.BodyPart(
       s"$hash.$fileLength.$startPosition",
-      HttpEntity
-        .Default(ContentType(MediaTypes.`video/mp4`), Files.size(file), FileIO.fromPath(file, 8192, startPosition)))
+      HttpEntity.Default(
+        ContentType(MediaTypes.`video/mp4`),
+        Files.size(file),
+        FileIO.fromPath(file, CHUNK_SIZE, startPosition)))
     val formData = Multipart.FormData(bodyPart)
     val request =
       HttpRequest(HttpMethods.POST, s"$BASE_URL/file/ihongka_files/upload/continue", entity = formData.toEntity())
     val responseF = Http().singleRequest(request)
     val response  = Await.result(responseF, Duration.Inf)
     response.status mustBe StatusCodes.OK
-    val result = Unmarshal(response.entity).to[ObjectNode].futureValue
+    val result = Unmarshal(response.entity).to[ArrayNode].futureValue
     println(result)
-    result.get("_id").asText() mustBe hash
-    result.get("size").asLong() mustBe fileLength
+    result.get(0).get("_id").asText() mustBe hash
+    result.get(0).get("uploadSize").asLong() mustBe fileLength
   }
 
   implicit override def patienceConfig: PatienceConfig = PatienceConfig(Span(30, Seconds), Span(50, Milliseconds))

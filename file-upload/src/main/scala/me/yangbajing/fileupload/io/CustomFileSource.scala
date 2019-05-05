@@ -58,9 +58,9 @@ final class CustomFileSource(path: Path, chunkSize: Int, startPosition: Long = 0
 
           channel = FileChannel.open(path, StandardOpenOption.READ)
           channel.position(position)
-          if (endPosition > 0) {
-            channel = channel.truncate(endPosition)
-          }
+//          if (endPosition > 0) {
+//            channel = channel.truncate(endPosition)
+//          }
         } catch {
           case ex: Exception =>
             ioResultPromise.trySuccess(IOResult(position, Failure(ex)))
@@ -69,9 +69,12 @@ final class CustomFileSource(path: Path, chunkSize: Int, startPosition: Long = 0
       }
 
       override def onPull(): Unit = {
-        if (availableChunks.size < maxReadAhead && !eofEncountered)
+        if (availableChunks.size < maxReadAhead && !eofEncountered) {
           availableChunks = readAhead(maxReadAhead, availableChunks)
+        }
+
         //if already read something and try
+
         if (availableChunks.nonEmpty) {
           emitMultiple(out, availableChunks.iterator, () => if (eofEncountered) success() else setHandler(out, handler))
           availableChunks = Vector.empty[ByteString]
@@ -84,7 +87,7 @@ final class CustomFileSource(path: Path, chunkSize: Int, startPosition: Long = 0
       }
 
       /** BLOCKING I/O READ */
-      @tailrec def readAhead(maxChunks: Int, chunks: Vector[ByteString]): Vector[ByteString] =
+      @tailrec def readAhead(maxChunks: Int, chunks: Vector[ByteString]): Vector[ByteString] = {
         if (chunks.size < maxChunks && !eofEncountered) {
           val readBytes = try channel.read(buffer, position)
           catch {
@@ -100,15 +103,21 @@ final class CustomFileSource(path: Path, chunkSize: Int, startPosition: Long = 0
             val newChunks = chunks :+ ByteString.fromByteBuffer(buffer)
             buffer.clear()
 
-            if (readBytes < chunkSize) {
+            if (readBytes < chunkSize ||
+                (endPosition > 0 && position >= endPosition)) {
               eofEncountered = true
               newChunks
-            } else readAhead(maxChunks, newChunks)
+            } else {
+              readAhead(maxChunks, newChunks)
+            }
           } else {
             eofEncountered = true
             chunks
           }
-        } else chunks
+        } else {
+          chunks
+        }
+      }
 
       override def onDownstreamFinish(): Unit = success()
 
